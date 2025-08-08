@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Counselor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #60a5fa, #bfdbfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        
+        #results h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #93c5fd; /* Light blue for headings */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #1e3a8a;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #results h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        #results ul {
+            list-style-type: disc;
+            margin-left: 1.75rem;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+            color: #d1d5db;
+        }
+        #results p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+        #results strong {
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+        #results a {
+            color: #93c5fd;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+        #results a:hover {
+            color: #bfdbfe;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen flex items-center justify-center p-4">
+
+    <div class="container mx-auto max-w-2xl w-full">
+        <div class="bg-gray-800/70 backdrop-blur-xl p-8 sm:p-10 rounded-2xl shadow-2xl shadow-blue-900/50 border border-gray-700/50">
+            
+            <div class="text-center mb-10">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6M9 11.25h6m-6 4.5h6M5.25 6.75h-.008v.008H5.25V6.75zm0 4.5h-.008v.008H5.25v-.008zm0 4.5h-.008v.008H5.25v-.008zm13.5-9h.008v.008h-.008V6.75zm0 4.5h.008v.008h-.008v-.008zm0 4.5h.008v.008h-.008v-.008z" />
+                    </svg>
+                </div>
+                <h1 class="text-4xl sm:text-5xl font-extrabold gradient-text">AI Career Counselor</h1>
+                <p class="text-gray-400 mt-3 text-lg">Discover your future career path together!</p>
+            </div>
+
+            <form id="career-form" class="space-y-6">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-300">What is your name?</label>
+                    <input type="text" id="name" class="bg-gray-900/50 border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 transition-shadow duration-200" placeholder="e.g., Abc" required>
+                </div>
+                 <div>
+                    <label for="age" class="block mb-2 text-sm font-medium text-gray-300">What is your age?</label>
+                    <input type="number" id="age" class="bg-gray-900/50 border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 transition-shadow duration-200" placeholder="e.g., 22" required>
+                </div>
+                <div>
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-300">What is your email?</label>
+                    <input type="email" id="email" class="bg-gray-900/50 border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 transition-shadow duration-200" placeholder="e.g., Abc@example.com" required>
+                </div>
+                <div>
+                    <label for="hobbies" class="block mb-2 text-sm font-medium text-gray-300">What are your hobbies & interests?</label>
+                    <input type="text" id="hobbies" class="bg-gray-900/50 border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 transition-shadow duration-200" placeholder="e.g., Coding, reading, playing guitar" required>
+                </div>
+                <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-base w-full px-6 py-3.5 text-center transition-all duration-300 transform hover:scale-105">
+                    Get My Career Plan
+                </button>
+            </form>
+
+            <div id="loader" class="mt-10 text-center hidden">
+                <svg class="animate-spin h-10 w-10 text-blue-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-4 text-gray-400 font-medium">Analyzing your profile...</p>
+            </div>
+            
+            <div id="status-container" class="mt-6 hidden"></div>
+
+            <div id="results-container" class="mt-4 hidden">
+                <div id="results" class="prose max-w-none"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('career-form');
+        const resultsContainer = document.getElementById('results-container');
+        const resultsDiv = document.getElementById('results');
+        const loader = document.getElementById('loader');
+        const statusContainer = document.getElementById('status-container');
+
+        function showDialog(message) {
+            const dialogOverlay = document.createElement('div');
+            dialogOverlay.className = 'modal-overlay';
+
+            const dialogBox = document.createElement('div');
+            dialogBox.className = 'bg-gray-800 border border-gray-700 p-8 rounded-lg shadow-xl text-center';
+            
+            const messageP = document.createElement('p');
+            messageP.className = 'text-gray-200 text-lg mb-6';
+            messageP.textContent = message;
+            
+            const closeButton = document.createElement('button');
+            closeButton.className = 'text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5';
+            closeButton.textContent = 'Close';
+            closeButton.onclick = () => {
+                document.body.removeChild(dialogOverlay);
+            };
+
+            dialogBox.appendChild(messageP);
+            dialogBox.appendChild(closeButton);
+            dialogOverlay.appendChild(dialogBox);
+            document.body.appendChild(dialogOverlay);
+        }
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('name').value;
+            const ageInput = document.getElementById('age').value;
+            const emailInput = document.getElementById('email').value;
+            const hobbiesInput = document.getElementById('hobbies').value;
+
+            loader.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            statusContainer.classList.add('hidden');
+            resultsDiv.innerHTML = ''; 
+            statusContainer.innerHTML = '';
+
+            let response;
+            try {
+                const relayApiUrl = 'https://hook.relay.app/api/v1/playbook/cme2f5h5d07k30pm3b5w8cupl/trigger/8OSj0qZX_9iXO6MJem-mbw';
+                const relayApiKey = 'PASTE_YOUR_API_KEY_HERE';
+
+                response = await fetch(relayApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        "name": nameInput, 
+                        "age": ageInput,
+                        "email": emailInput,
+                        "hobbies": hobbiesInput 
+                    }),
+                });
+
+                if (response.status === 200) {
+                    showDialog("Request received! Please check your email for the response.");
+                    form.reset();
+                } else if (!response.ok) {
+                    throw new Error(`API request failed`);
+                } else {
+                    const data = await response.json();
+                    statusContainer.innerHTML = `<p class="text-green-400 bg-green-900/50 p-3 rounded-lg text-center"><strong>Status ${response.status}:</strong> Success! Your results are below.</p>`;
+                    statusContainer.classList.remove('hidden');
+
+                    const suggestionsText = data.output || "No suggestions found. Please check your Relay.app workflow configuration.";
+                    const htmlContent = marked.parse(suggestionsText);
+                    resultsDiv.innerHTML = htmlContent;
+                    resultsContainer.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error("Error fetching from Relay.app:", error);
+                const status = response ? response.status : 'N/A';
+                const statusText = response ? response.statusText : 'No response';
+                statusContainer.innerHTML = `<p class="text-red-400 bg-red-900/50 p-4 rounded-lg"><strong>Error (Status: ${status} ${statusText}):</strong> Could not retrieve career suggestions. Please ensure the API URL and Key are correct and try again.</p>`;
+                statusContainer.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>
